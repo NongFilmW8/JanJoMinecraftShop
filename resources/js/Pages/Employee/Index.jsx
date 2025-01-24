@@ -60,7 +60,7 @@ export default function Index({ employees, query }) {
                                         <th className="px-6 py-3 text-left text-sm font-medium uppercase">Gender</th>
                                         <th className="px-6 py-3 text-left text-sm font-medium uppercase">Birth Date</th>
                                         <th className="px-6 py-3 text-left text-sm font-medium uppercase">Hire Date</th>
-                                        <th className="px-6 py-3 text-left text-sm font-medium uppercase">Profile Image</th>
+                                        <th className="px-6 py-3 text-center text-sm font-medium uppercase">Profile Image</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-green-200">
@@ -74,15 +74,34 @@ export default function Index({ employees, query }) {
                                             </td>
                                             <td className="px-6 py-4 text-sm text-gray-700">{employee.birth_date}</td>
                                             <td className="px-6 py-4 text-sm text-gray-700">{employee.hire_date}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">
-                                                {employee.profile_image ? (
+                                            <td className="px-6 py-4 text-sm text-gray-700 text-center">
+                                                {employee.profile_picture ? (
                                                     <img
-                                                        src={`/storage/${employee.profile_image}`}
+                                                        src={`/storage/${employee.profile_picture}`}
                                                         alt={`${employee.first_name} ${employee.last_name}`}
-                                                        className="w-10 h-10 rounded-full"
+                                                        style={{
+                                                            width: '50px',
+                                                            height: '50px',
+                                                            borderRadius: '50%',
+                                                            objectFit: 'cover',
+                                                            display: 'inline-block',
+                                                            verticalAlign: 'middle',
+                                                        }}
                                                     />
                                                 ) : (
-                                                    <span className="text-gray-500">No Image</span>
+                                                    <div
+                                                        style={{
+                                                            width: '50px',
+                                                            height: '50px',
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            verticalAlign: 'middle',
+                                                            textAlign: 'center',
+                                                        }}
+                                                    >
+                                                        <span className="text-gray-500">No Image</span>
+                                                    </div>
                                                 )}
                                             </td>
                                         </tr>

@@ -49,9 +49,6 @@ class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
 
-       /* The code snippet you provided is from a PHP Laravel application's ProfileController. The
-       specific part you are asking about is related to deleting a user's account. Here's a
-       breakdown of what that code is doing: */
         $user = $request->user();
 
         Auth::logout();

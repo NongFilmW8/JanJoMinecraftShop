@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import InputError from '@/Components/InputError';
 import { useForm, Head } from '@inertiajs/react';
 
 export default function Create({ departments }) {
@@ -21,7 +20,7 @@ export default function Create({ departments }) {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        setData('profile_image', file);
+        setData('profile_picture', file);
 
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -31,7 +30,7 @@ export default function Create({ departments }) {
             reader.readAsDataURL(file);
         }
     };
-
+        // ใช้ FormData สำหรับส่งข้อมูลที่มีไฟล์
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -156,8 +155,12 @@ export default function Create({ departments }) {
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="profile_image" className="block text-sm font-medium text-gray-700">Profile Image</label>
-                        <input type="file" id="profile_image" onChange={handleImageChange} className="mt-1 block w-full" disabled={processing} />
+                        <label htmlFor="profile_picture" className="block text-sm font-medium text-gray-700">Profile Image</label>
+                        <input type="file"
+                        id="profile_picture"
+                        onChange={handleImageChange}
+                        className="mt-1 block w-full"
+                        disabled={processing} />
                     </div>
                     {preview && (
                         <div className="mt-4">

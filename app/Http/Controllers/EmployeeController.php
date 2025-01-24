@@ -42,6 +42,7 @@ class EmployeeController extends Controller
         $departments = DB::table('departments')->select('dept_no', 'dept_name')->get();
         // ส่งข้อมูลไปยังหน้า Inertia
         return inertia('Employee/Create', ['departments' => $departments]);
+
     }
 
     /**
@@ -55,49 +56,56 @@ class EmployeeController extends Controller
             'birth_date' => 'required|date',
             'hire_date' => 'required|date',
             'dept_no' => 'required|string|exists:departments,dept_no',
-            'gender' => 'nullable|string|in:Male,Female,Other',
+            'gender' => 'required|string|in:Male,Female,Other',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+        // บันทึกข้อมูลแต่ละช่องใน Laravel Log
+        Log::info("Employee Data");
+        Log::info('"First Name": "' . $validated['first_name'] . '"');
+        Log::info('"Last Name": "' . $validated['last_name'] . '"');
+        Log::info('"Birth Date": "' . $validated['birth_date'] . '"');
+        Log::info('"Hire Date": "' . $validated['hire_date'] . '"');
+        Log::info('"Department No": "' . $validated['dept_no'] . '"');
 
         $profilePicturePath = null;
         if ($request->hasFile('profile_picture')) {
             $profilePicturePath = $request->file('profile_picture')->store('profile_pictures', 'public');
         }
+        DB::transaction(function () use ($validated, $profilePicturePath, &$newEmpNo) {
+            $newEmpNo = DB::table('employees')->lockForUpdate()->max('emp_no') + 1;
 
-        // สร้างหมายเลขพนักงานใหม่
-        $newEmpNo = DB::table('employees')->max('emp_no') + 1;
+            // เพิ่มข้อมูลลงในตาราง employees
+            DB::table('employees')->insert([
+                'emp_no' => $newEmpNo,
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'birth_date' => $validated['birth_date'],
+                'hire_date' => $validated['hire_date'],
+                'gender' => $validated['gender'] === 'Male' ? 'M' : ($validated['gender'] === 'Female' ? 'F' : 'O'),
+                'profile_picture' => $profilePicturePath,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        // เพิ่มข้อมูลลงในตาราง employees
-        DB::table('employees')->insert([
-            'emp_no' => $newEmpNo,
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'birth_date' => $validated['birth_date'],
-            'hire_date' => $validated['hire_date'],
-            'gender' => $validated['gender'] === 'male' ? 'M' : ($validated['gender'] === 'female' ? 'F' : 'O'), // แปลงค่าที่ส่งเข้ามา
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            // เพิ่มข้อมูลลงในตาราง dept_emp
+            DB::table('dept_emp')->insert([
+                'emp_no' => $newEmpNo,
+                'dept_no' => $validated['dept_no'],
+                'from_date' => now(),
+                'to_date' => now()->addYears(5)->format('Y-m-d'),
+            ]);
+        });
+try {
+            // ส่งกลับไปหน้ารายการพนักงานพร้อมข้อความแจ้งเตือน
+            return redirect()->route('employees.index')
+                ->with('success', 'Employee created successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to create employee. Please try again.');
 
-        // เพิ่มข้อมูลลงในตาราง dept_emp
 
-        DB::table('dept_emp')->insert([
-            'emp_no' => $newEmpNo,
-            'dept_no' => $validated['dept_no'],
-            'from_date' => now(),
-            'to_date' => now()->addYears(5)->format('Y-m-d'),
-        ]);
-
+        }
         // เพิ่มข้อมูลพนักงานใหม่
-        Employee::create([
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'birth_date' => $validated['birth_date'],
-            'hire_date' => $validated['hire_date'],
-            'dept_no' => $validated['dept_no'],
-            'gender' => $validated['gender'],
-            'profile_picture' => $profilePicturePath,
-        ]);
+
 
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
