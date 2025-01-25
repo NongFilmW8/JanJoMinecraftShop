@@ -1,0 +1,2 @@
+     chmod -R 775 storage
+   php artisan storage:link
