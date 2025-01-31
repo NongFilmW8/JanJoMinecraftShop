@@ -9,6 +9,9 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call([
+            DepartmentsTableSeeder::class,
+        ]);
         // สร้างผู้ใช้ทดสอบ 1 คน
         User::firstOrCreate(
         [
@@ -27,3 +30,4 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 }
+

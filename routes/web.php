@@ -43,12 +43,17 @@ Route::get('/employees/create', [EmployeeController::class, 'create'])->name('em
 Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
 
 use App\Http\Controllers\BookingController;
+
 // แสดงรายการห้องพัก
-Route::get('/rooms', [BookingController::class, 'index'])->name('rooms.index');
+Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+
 // แสดงฟอร์มจองห้อง
 Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
+
 // บันทึกการจอง
 Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
-// แสดงรายการการจอง
-Route::get('/bookings', [BookingController::class, 'show'])->name('bookings.show');
+
+// แสดงรายการการจอง (หรือดูรายละเอียดการจอง)
+Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
+
 require __DIR__.'/auth.php';

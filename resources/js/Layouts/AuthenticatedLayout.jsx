@@ -58,6 +58,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Create Employee
                                 </NavLink>
+                                <NavLink
+                                    href={route('bookings.create')}
+                                    active={route().current('bookings.create')}
+                                >
+                                    Booking create
+                                </NavLink>
                             </div>
                         </div>
 
