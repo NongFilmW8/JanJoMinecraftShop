@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
@@ -7,7 +8,7 @@ use App\Http\Controllers\CreateController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Models\Product;
+use App\Models\Product;use App\Http\Controllers\ProductTypeController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -40,4 +41,14 @@ Route::resource('products', ProductController::class);
 Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
 Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
 Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+
+use App\Http\Controllers\BookingController;
+// แสดงรายการห้องพัก
+Route::get('/rooms', [BookingController::class, 'index'])->name('rooms.index');
+// แสดงฟอร์มจองห้อง
+Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
+// บันทึกการจอง
+Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+// แสดงรายการการจอง
+Route::get('/bookings', [BookingController::class, 'show'])->name('bookings.show');
 require __DIR__.'/auth.php';

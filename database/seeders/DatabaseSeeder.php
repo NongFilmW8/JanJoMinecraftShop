@@ -3,35 +3,27 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
+        // สร้างผู้ใช้ทดสอบ 1 คน
+        User::firstOrCreate(
+        [
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password' => bcrypt('password'), // ตั้งรหัสผ่าน
+
         ]);
 
-        \App\Models\Product::create([
-            'name' => 'Diamond Sword',
-            'price' => 99.99,
-            'description' => 'A powerful sword made of diamond',
-            'image' => 'minecraft-1-logo-pack/NormalID.png'
-        ]);
-
-        \App\Models\Product::create([
-            'name' => 'Iron Pickaxe',
-            'price' => 49.99,
-            'description' => 'Durable mining tool',
-            'image' => 'images/iron_pickaxe.jpg'
+        // เรียกใช้ Seeders อื่นๆ ที่จำเป็น
+        $this->call([
+        RoomTypeSeeder::class, // เรียกก่อนเพื่อสร้างประเภทห้อง
+        CustomerSeeder::class, // สร้างลูกค้า
+        RoomSeeder::class,     // สร้างห้องพัก
+        BookingSeeder::class   // สร้างการจอง
         ]);
     }
 }

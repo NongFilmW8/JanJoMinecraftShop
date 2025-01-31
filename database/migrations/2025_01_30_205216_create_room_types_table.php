@@ -6,20 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('room_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('price', 8, 2);
+            $table->decimal('price_per_night', 8, 2); // ตรวจสอบว่ามีคอลัมน์นี้
             $table->text('description')->nullable();
-            $table->string('image')->nullable(); //เพิ่มรูปในหน้า product
             $table->timestamps();
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('room_types');
     }
 };

@@ -83,6 +83,7 @@ class EmployeeController extends Controller
                 'hire_date' => $validated['hire_date'],
                 'gender' => $validated['gender'] === 'Male' ? 'M' : ($validated['gender'] === 'Female' ? 'F' : 'O'),
                 'profile_picture' => $profilePicturePath,
+                'dept_no' => $validated['dept_no'], // <-- เพิ่มบรรทัดนี้
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
