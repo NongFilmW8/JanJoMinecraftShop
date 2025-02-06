@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->string('guest_name'); // ลบ '->after()' ออก
             $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('room_id');
+            $table->unsignedBigInteger('room_number');
             $table->date('check_in');
             $table->date('check_out');
             $table->decimal('total_price', 8, 2); // Ensure this line exists

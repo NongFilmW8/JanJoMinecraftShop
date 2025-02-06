@@ -11,10 +11,22 @@ class Booking extends Model
 
     // Define fillable fields or relationships if needed
     protected $fillable = [
-        'room_id',
-        'customer_id',
-        'check_in_date',
-        'check_out_date',
+        'guest_name',
+        'room_number',
+        'check_in',
+        'check_out',
         'total_price',
+        'roomtype',  // เอาไว้เก็บประเภทห้อง
+
     ];
+
+    public function roomType()
+    {
+        // return $this->belongsTo(RoomType::class);
+    }
+
+    public function customer()
+    {
+        // return $this->belongsTo(Customer::class, 'customer_id');
+}
 }

@@ -22,6 +22,7 @@ class BookingFactory extends Factory
     public function definition(): array
     {
         return [
+            'guest_name' => $this->faker->name(),
             'customer_id' => Customer::factory(), // สร้างลูกค้าใหม่
             'room_id' => Room::factory(), // สร้างห้องใหม่
             'check_in' => $this->faker->dateTimeBetween('now', '+1 week'), // วันที่เช็คอิน

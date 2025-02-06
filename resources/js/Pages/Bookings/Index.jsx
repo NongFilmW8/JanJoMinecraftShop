@@ -71,19 +71,26 @@ export default function Index({ bookings, query }) {
                                         <th className="px-6 py-3 text-left text-sm font-medium uppercase">Check-in Date</th>
                                         <th className="px-6 py-3 text-left text-sm font-medium uppercase">Check-out Date</th>
                                         <th className="px-6 py-3 text-left text-sm font-medium uppercase">Total Price</th>
+                                        <th className="px-6 py-3 text-left text-sm font-medium uppercase">Room Type</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-green-200">
-                                    {bookings.data.map((booking, index) => (
-                                        <tr key={index} className="hover:bg-green-100">
-                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.id}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.guest_name}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.room_number}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.check_in_date}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.check_out_date}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">{booking.total_price}</td>
-                                        </tr>
-                                    ))}
+                                {bookings.data.map((booking) => (
+                                <tr key={booking.id}>
+                                    <td style={{ textAlign: 'center' }}>{booking.id}</td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        {booking.customer ? booking.customer.guest_name : (booking.guest_name || "Unknown")}
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>{booking.room_number}</td>
+                                    <td style={{ textAlign: 'center' }}>{booking.check_in}</td>
+                                    <td style={{ textAlign: 'center' }}>{booking.check_out}</td>
+                                    <td style={{ textAlign: 'center' }}>{booking.total_price}</td>
+                                    <td style={{ textAlign: 'center' }}>
+                                    {booking.roomtype ? booking.roomtype : 'Unknown'}
+                                    </td>
+                                </tr>
+                            ))}
+
                                 </tbody>
                             </table>
                         </div>

@@ -1,29 +1,35 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Carbon\Carbon;
+use App\Models\Room; // เพิ่มบรรทัดนี้
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\DB;
 class BookingController extends Controller
 {
 
         // แสดงรายการการจอง
         public function index(Request $request)
-        {
-            $query = $request->input('search');
+{
+    // ดึงข้อมูลการจอง
+    $query = $request->input('search');
+    $bookings = Booking::when($query, function ($q) use ($query) {
+        return $q->where('guest_name', 'like', "%{$query}%")
+            ->orWhere('room_number', 'like', "%{$query}%");
+    })->paginate(10);
 
-            $bookings = Booking::when($query, function ($q) use ($query) {
-                return $q->where('guest_name', 'like', "%{$query}%")
-                        ->orWhere('room_number', 'like', "%{$query}%");
-            })->paginate(10);
+    // ดึงข้อมูลประเภทห้อง
+    $roomTypes = ['Standard', 'Suite', 'VIP'];
 
-            return Inertia::render('Bookings/Index', [
-                'bookings' => $bookings, // ไม่ต้องแปลงเป็น array
-                'query' => $query,
-            ]);
-        }
+    // ส่งข้อมูลไปยัง View
+    return Inertia::render('Bookings/Index', [
+        'bookings' => $bookings,
+        'roomTypes' => $roomTypes,
+        'query' => $query,
+    ]);
+}
 
     // แสดงฟอร์มจองห้อง
     public function create()
@@ -34,28 +40,56 @@ class BookingController extends Controller
     // บันทึกการจอง
     public function store(Request $request)
     {
+        // dd($request->all()); // ดูค่าที่ React ส่งมาจริง ๆ
         $request->validate([
             'guest_name' => 'required|string|max:255',
-            'room_id' => 'required|string|max:255',
-            'check_in_date' => 'required|date',
-            'check_out_date' => 'required|date',
-            'total_price' => 'required|numeric',
+            'check_in' => 'required|date',
+            'check_out' => 'required|date|after_or_equal:check_in',
+            'roomtype' => 'required|string', // ตรวจสอบฟิลด์ roomtypes
+            'room_number' => 'required|string', // ตรวจสอบฟิลด์ room_number
+            'total_price' => 'required|numeric|min:0',
         ]);
+// คำนวณจำนวนวันที่เข้าพัก
+$days = Carbon::parse($request->check_in)->diffInDays(Carbon::parse($request->check_out));
+
+// กำหนดราคาแต่ละประเภทห้อง (หรือดึงข้อมูลจากฐานข้อมูล)
+$roomRates = [
+    'Standard' => 1000, // ราคาเฉลี่ยของห้อง Standard
+    'Suite' => 1500,    // ราคาเฉลี่ยของห้อง Suite
+    'VIP' => 2000,      // ราคาเฉลี่ยของห้อง VIP
+];
+
+// คำนวณราคาโดยการคูณจำนวนคืนกับอัตราค่าห้อง
+$roomRate = $roomRates[$request->roomtype] ?? 0; // เลือกราคาห้องตาม roomtype
+$totalPrice = $roomRate * $days; // คำนวณราคาทั้งหมด
+
+
+
+
+        // เพิ่มข้อมูลการจองในตาราง bookings
         Booking::create([
-            'guest_name' => $request->guest_name,
             'room_number' => $request->room_number,
-            'check_in_date' => $request->check_in_date,
-            'check_out_date' => $request->check_out_date,
-            'total_price' => $request->total_price,
+            'guest_name' => $request->guest_name,
+            'check_in' => $request->check_in,
+            'check_out' => $request->check_out,
+            'roomtype' => $request->roomtype,
+            'total_price' => $totalPrice, // ส่งค่าที่คำนวณแล้วไป
         ]);
+        // dd('Booking created successfully!');
+
+
         return redirect()->route('bookings.index')->with('success', 'การจองสำเร็จ!');
     }
 
     // แสดงรายละเอียดของการจอง
     public function show(Booking $booking)
     {
+        $roomType = DB::table('roomstype')->get()->toArray() ?: [];
         return Inertia::render('Bookings/Show', [
             'booking' => $booking,
+            'roomType' => $roomType ?: [], // ใช้ค่าเริ่มต้นเป็นอาร์เรย์ว่างหากไม่มีข้อมูล
+            'query' => request()->input('search', ''), // ใช้ค่าเริ่มต้นเป็น string ว่าง
         ]);
     }
+
 }

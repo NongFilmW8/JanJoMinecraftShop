@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory; // เพิ่มบรรทัดนี้
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RoomType extends Model
 {
-    use HasFactory; // เพิ่มบรรทัดนี้
-    // ...
+    use HasFactory;
+
+    protected $table = 'roomtype'; // ถ้าชื่อตารางในฐานข้อมูลเป็น 'roomstype'
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'roomstype_id');
+    }
 }
