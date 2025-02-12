@@ -54,6 +54,8 @@ Route::get('/bookings/create', [BookingController::class, 'create'])->name('book
 Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
 
 // แสดงรายการการจอง (หรือดูรายละเอียดการจอง)
-Route::get('/bookings/{id}', [BookingController::class, 'show'])->name('bookings.show');
+Route::get('/bookings/{booking}/update', [BookingController::class, 'edit'])->name('bookings.edit');
+Route::put('/bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
+Route::delete('/bookings/{id}', [BookingController::class, 'destroy'])->name('bookings.destroy');
 
 require __DIR__.'/auth.php';

@@ -91,5 +91,49 @@ $totalPrice = $roomRate * $days; // คำนวณราคาทั้งห�
             'query' => request()->input('search', ''), // ใช้ค่าเริ่มต้นเป็น string ว่าง
         ]);
     }
+    public function update(Request $request, Booking $booking)
+    {
+        $validatedData = $request->validate([
+            'guest_name' => 'required|string|max:255',
+            'check_in' => 'required|date',
+            'check_out' => 'required|date|after:check_in',
+            'room_number' => 'required|string|max:255',
+            'roomtype' => 'required|string|max:255',
+            'total_price' => 'required|numeric',
+        ]);
+
+        $booking->update($validatedData);
+
+        return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
+    }
+    // Redirect with success message
+    public function edit(Booking $booking)
+    {
+        return Inertia::render('Bookings/Update', [
+            'booking' => $booking,
+        ]);
+    }
+
+
+
+ /**
+  * The code snippet contains PHP functions to edit and delete a booking record.
+  *
+  * @param id The "id" parameter in the code snippet refers to the unique identifier of a booking
+  * record. It is used to retrieve or delete a specific booking entry from the database based on its
+  * ID.
+  *
+  * @return In the `edit` function, an Inertia response is being returned with the view `Bookings/Edit`
+  * and the booking data retrieved using `findOrFail` method.
+  */
+
+
+public function destroy($id)
+{
+    $booking = Booking::findOrFail($id);
+    $booking->delete();
+
+    return redirect()->route('bookings.index')->with('success', 'Booking deleted successfully.');
+}
 
 }
